@@ -2,6 +2,8 @@ from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 import pdfplumber
 import io
+import spacy
+from spacy.matcher import PhraseMatcher
 from skills_data import SKILLS_DB
 from ats_checker import check_ats_score
 
@@ -14,13 +16,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# spaCy model load karo (ek hi dafa, app start hote hi)
+nlp = spacy.load("en_core_web_sm")
+
+# PhraseMatcher setup karo skills ke liye
+matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
+skill_patterns = [nlp.make_doc(skill) for skill in SKILLS_DB]
+matcher.add("SKILLS", skill_patterns)
+
+
 def extract_skills(text: str):
-    text_lower = text.lower()
-    found_skills = []
-    for skill in SKILLS_DB:
-        if skill in text_lower:
-            found_skills.append(skill)
-    return found_skills
+    doc = nlp(text)
+    matches = matcher(doc)
+    found_skills = set()
+    for match_id, start, end in matches:
+        span = doc[start:end]
+        found_skills.add(span.text.lower())
+    return list(found_skills)
+
 
 def calculate_match(resume_skills, jd_skills):
     resume_set = set(resume_skills)
@@ -40,9 +53,11 @@ def calculate_match(resume_skills, jd_skills):
         "missing_skills": list(missing)
     }
 
+
 @app.get("/")
 def home():
     return {"message": "Resume Analyzer API is running"}
+
 
 @app.post("/analyze")
 async def analyze_resume(
