@@ -34,9 +34,7 @@ function App() {
         body: formData,
       });
 
-      if (!response.ok) {
-        throw new Error('Something went wrong on the server.');
-      }
+      if (!response.ok) throw new Error('Server error');
 
       const data = await response.json();
       setResult(data);
@@ -48,85 +46,96 @@ function App() {
   };
 
   return (
-    <div className="container">
-      <h1>AI Resume Analyzer</h1>
-
-      <form onSubmit={handleSubmit} className="form">
-        <label>
-          Upload Resume (PDF)
-          <input type="file" accept=".pdf" onChange={handleFileChange} />
-        </label>
-
-        <label>
-          Job Description
-          <textarea
-            rows="6"
-            placeholder="Paste the job description here..."
-            value={jobDescription}
-            onChange={(e) => setJobDescription(e.target.value)}
-          />
-        </label>
-
-        <button type="submit" disabled={loading}>
-          {loading ? 'Analyzing...' : 'Analyze Resume'}
-        </button>
-      </form>
-
-      {error && <p className="error">{error}</p>}
-
-      {result && (
-        <div className="results">
-          <h2>Results</h2>
-
-          <div className="score-card">
-            <div>
-              <p className="score-label">Match Score</p>
-              <p className="score-value">{result.match_score}%</p>
-            </div>
-            <div>
-              <p className="score-label">ATS Score</p>
-              <p className="score-value">{result.ats_score}%</p>
-            </div>
-          </div>
-
-          <div className="skills-section">
-            <h3>Matched Skills</h3>
-            <div className="tags">
-              {result.matched_skills.length > 0 ? (
-                result.matched_skills.map((skill) => (
-                  <span key={skill} className="tag tag-green">{skill}</span>
-                ))
-              ) : (
-                <p>None found.</p>
-              )}
-            </div>
-          </div>
-
-          <div className="skills-section">
-            <h3>Missing Skills</h3>
-            <div className="tags">
-              {result.missing_skills.length > 0 ? (
-                result.missing_skills.map((skill) => (
-                  <span key={skill} className="tag tag-red">{skill}</span>
-                ))
-              ) : (
-                <p>None missing — great match!</p>
-              )}
-            </div>
-          </div>
-
-          {result.ats_feedback.length > 0 && (
-            <div className="skills-section">
-              <h3>ATS Feedback</h3>
-              <ul>
-                {result.ats_feedback.map((tip, i) => (
-                  <li key={i}>{tip}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+    <div className="page">
+      <header className="header">
+        <div className="logo">
+          <span className="logo-icon">◆</span>
+          <span>ResumeAI</span>
         </div>
-      )}
+        <p className="tagline">Smart resume analysis powered by NLP</p>
+      </header>
+
+      <div className="container">
+        <form onSubmit={handleSubmit} className="form">
+          <div className="field">
+            <label>Resume (PDF)</label>
+            <div className="file-input">
+              <input type="file" accept=".pdf" onChange={handleFileChange} id="file-upload" />
+              <label htmlFor="file-upload" className="file-label">
+                {file ? file.name : 'Choose file...'}
+              </label>
+            </div>
+          </div>
+
+          <div className="field">
+            <label>Job Description</label>
+            <textarea
+              rows="6"
+              placeholder="Paste the job description here..."
+              value={jobDescription}
+              onChange={(e) => setJobDescription(e.target.value)}
+            />
+          </div>
+
+          <button type="submit" disabled={loading}>
+            {loading ? 'Analyzing...' : 'Analyze Resume'}
+          </button>
+        </form>
+
+        {error && <p className="error">{error}</p>}
+
+        {result && (
+          <div className="results">
+            <div className="score-grid">
+              <div className="score-card">
+                <p className="score-label">Match Score</p>
+                <p className="score-value">{result.match_score}<span>%</span></p>
+              </div>
+              <div className="score-card">
+                <p className="score-label">ATS Score</p>
+                <p className="score-value">{result.ats_score}<span>%</span></p>
+              </div>
+            </div>
+
+            <div className="skills-section">
+              <h3>Matched Skills</h3>
+              <div className="tags">
+                {result.matched_skills.length > 0 ? (
+                  result.matched_skills.map((skill) => (
+                    <span key={skill} className="tag tag-green">{skill}</span>
+                  ))
+                ) : (
+                  <p className="empty-state">None found.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="skills-section">
+              <h3>Missing Skills</h3>
+              <div className="tags">
+                {result.missing_skills.length > 0 ? (
+                  result.missing_skills.map((skill) => (
+                    <span key={skill} className="tag tag-red">{skill}</span>
+                  ))
+                ) : (
+                  <p className="empty-state">None missing — great match!</p>
+                )}
+              </div>
+            </div>
+
+            {result.ats_feedback.length > 0 && (
+              <div className="skills-section">
+                <h3>ATS Feedback</h3>
+                <ul className="feedback-list">
+                  {result.ats_feedback.map((tip, i) => (
+                    <li key={i}>{tip}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
