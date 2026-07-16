@@ -8,6 +8,12 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const getScoreClass = (score) => {
+    if (score >= 70) return 'score-good';
+    if (score >= 40) return 'score-medium';
+    return 'score-low';
+  };
+
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
   };
@@ -61,8 +67,8 @@ function App() {
             <label>Resume (PDF)</label>
             <div className="file-input">
               <input type="file" accept=".pdf" onChange={handleFileChange} id="file-upload" />
-              <label htmlFor="file-upload" className="file-label">
-                {file ? file.name : 'Choose file...'}
+              <label htmlFor="file-upload" className={`file-label ${file ? 'file-selected' : ''}`}>
+                {file ? `✓ ${file.name}` : 'Choose file...'}
               </label>
             </div>
           </div>
@@ -78,7 +84,14 @@ function App() {
           </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Analyzing...' : 'Analyze Resume'}
+            {loading ? (
+              <span className="btn-loading">
+                <span className="spinner"></span>
+                Analyzing...
+              </span>
+            ) : (
+              'Analyze Resume'
+            )}
           </button>
         </form>
 
@@ -87,11 +100,11 @@ function App() {
         {result && (
           <div className="results">
             <div className="score-grid">
-              <div className="score-card">
+              <div className={`score-card ${getScoreClass(result.match_score)}`}>
                 <p className="score-label">Match Score</p>
                 <p className="score-value">{result.match_score}<span>%</span></p>
               </div>
-              <div className="score-card">
+              <div className={`score-card ${getScoreClass(result.ats_score)}`}>
                 <p className="score-label">ATS Score</p>
                 <p className="score-value">{result.ats_score}<span>%</span></p>
               </div>
