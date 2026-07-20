@@ -434,3 +434,20 @@ body {
   border-color: #f5a62340;
   color: var(--amber);
 }
+.download-report-btn {
+  background: transparent;
+  border: 1px solid var(--border, #333);
+  color: var(--text, #fff);
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  padding: 8px 14px;
+  border-radius: var(--radius, 6px);
+  cursor: pointer;
+  margin: 14px 0;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.download-report-btn:hover {
+  border-color: #5eead4;
+  color: #5eead4;
+}

@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
+import jsPDF from "jspdf";
 import Landing from "./Landing.jsx";
 import IntroLoader from "./IntroLoader.jsx";
 import Auth from "./Auth.jsx";
+import History from "./History.jsx";
 import { supabase } from "./supabaseClient";
 import "./App.css";
 
@@ -77,6 +79,7 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
   const [status, setStatus] = useState("idle"); // idle | analyzing | done | error
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
   const inputRef = useRef(null);
 
   const handleFile = (file) => {
@@ -100,11 +103,97 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
       const data = await analyzeResume(resumeFile, jobText);
       setResult(data);
       setStatus("done");
+
+      // Save to history (non-blocking — if it fails, don't break the UI)
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        if (userData?.user) {
+          await supabase.from("analyses").insert({
+            user_id: userData.user.id,
+            resume_name: resumeFile.name,
+            job_description: jobText,
+            match_score: data.score,
+            ats_score: data.atsScore,
+            matched_skills: data.matched,
+            missing_skills: data.missing,
+            ats_feedback: data.atsFeedback,
+            ai_summary: data.aiSummary || null,
+          });
+        }
+      } catch (saveErr) {
+        console.error("Failed to save to history:", saveErr);
+      }
     } catch (err) {
       console.error(err);
       setErrorMsg("Analysis failed. Make sure the backend server is running.");
       setStatus("error");
     }
+  };
+
+  const handleDownloadReport = () => {
+    if (!result) return;
+
+    const doc = new jsPDF();
+    const marginX = 20;
+    let y = 20;
+
+    doc.setFontSize(20);
+    doc.text("ResumeAI — Analysis Report", marginX, y);
+    y += 12;
+
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text(`Generated on ${new Date().toLocaleDateString()}`, marginX, y);
+    y += 14;
+
+    doc.setTextColor(0);
+    doc.setFontSize(14);
+    doc.text(`Match Score: ${result.score}%`, marginX, y);
+    y += 8;
+    doc.text(`ATS Score: ${result.atsScore}/100`, marginX, y);
+    y += 14;
+
+    doc.setFontSize(12);
+    doc.text("Matched Skills:", marginX, y);
+    y += 7;
+    doc.setFontSize(10);
+    const matchedText = result.matched.length ? result.matched.join(", ") : "None found.";
+    const matchedLines = doc.splitTextToSize(matchedText, 170);
+    doc.text(matchedLines, marginX, y);
+    y += matchedLines.length * 6 + 8;
+
+    doc.setFontSize(12);
+    doc.text("Missing Skills:", marginX, y);
+    y += 7;
+    doc.setFontSize(10);
+    const missingText = result.missing.length ? result.missing.join(", ") : "None missing.";
+    const missingLines = doc.splitTextToSize(missingText, 170);
+    doc.text(missingLines, marginX, y);
+    y += missingLines.length * 6 + 8;
+
+    if (result.atsFeedback && result.atsFeedback.length > 0) {
+      doc.setFontSize(12);
+      doc.text("ATS Feedback:", marginX, y);
+      y += 7;
+      doc.setFontSize(10);
+      result.atsFeedback.forEach((tip) => {
+        const lines = doc.splitTextToSize(`• ${tip}`, 170);
+        doc.text(lines, marginX, y);
+        y += lines.length * 6 + 2;
+      });
+      y += 6;
+    }
+
+    if (result.aiSummary) {
+      doc.setFontSize(12);
+      doc.text("AI Feedback:", marginX, y);
+      y += 7;
+      doc.setFontSize(10);
+      const summaryLines = doc.splitTextToSize(result.aiSummary, 170);
+      doc.text(summaryLines, marginX, y);
+    }
+
+    doc.save("resume-analysis-report.pdf");
   };
 
   const canAnalyze = resumeFile && jobText.trim().length > 0 && status !== "analyzing";
@@ -118,6 +207,21 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span className="brand-tag">DOCUMENT INTELLIGENCE · ATS SIMULATION</span>
+          <button
+            onClick={() => setShowHistory(true)}
+            style={{
+              background: "none",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--radius)",
+              color: "var(--text-muted)",
+              fontFamily: "var(--font-mono)",
+              fontSize: 11,
+              padding: "6px 10px",
+              cursor: "pointer",
+            }}
+          >
+            History
+          </button>
           {userEmail && (
             <span style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--text-muted)" }}>
               {userEmail}
@@ -235,6 +339,10 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
             <div className="results">
               <ScoreGauge score={result.score} />
 
+              <button className="download-report-btn" onClick={handleDownloadReport}>
+                ⬇ Download Report (PDF)
+              </button>
+
               <div className="tag-group">
                 <p className="tag-group-label">Matched keywords</p>
                 <div className="tags">
@@ -274,6 +382,17 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
           )}
         </section>
       </main>
+
+      {showHistory && (
+        <History
+          onClose={() => setShowHistory(false)}
+          onSelect={(pastResult) => {
+            setResult(pastResult);
+            setStatus("done");
+            setShowHistory(false);
+          }}
+        />
+      )}
     </div>
   );
 }
