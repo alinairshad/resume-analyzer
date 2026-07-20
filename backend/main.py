@@ -6,6 +6,7 @@ import spacy
 from spacy.matcher import PhraseMatcher
 from skills_data import SKILLS_DB
 from ats_checker import check_ats_score
+from ai_feedback import generate_ai_feedback
 
 app = FastAPI()
 
@@ -16,10 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# spaCy model load karo (ek hi dafa, app start hote hi)
 nlp = spacy.load("en_core_web_sm")
 
-# PhraseMatcher setup karo skills ke liye
 matcher = PhraseMatcher(nlp.vocab, attr="LOWER")
 skill_patterns = [nlp.make_doc(skill) for skill in SKILLS_DB]
 matcher.add("SKILLS", skill_patterns)
@@ -64,7 +63,6 @@ async def analyze_resume(
     file: UploadFile = File(...),
     job_description: str = Form(...)
 ):
-    # Resume text extract karo
     pdf_bytes = await file.read()
     extracted_text = ""
     with pdfplumber.open(io.BytesIO(pdf_bytes)) as pdf:
@@ -77,7 +75,7 @@ async def analyze_resume(
     jd_skills = extract_skills(job_description)
     match_result = calculate_match(resume_skills, jd_skills)
     ats_result = check_ats_score(extracted_text)
-
+    ai_summary = generate_ai_feedback(extracted_text, job_description, match_result["matched_skills"], match_result["missing_skills"])
     return {
         "filename": file.filename,
         "resume_skills": resume_skills,
@@ -86,5 +84,6 @@ async def analyze_resume(
         "matched_skills": match_result["matched_skills"],
         "missing_skills": match_result["missing_skills"],
         "ats_score": ats_result["ats_score"],
-        "ats_feedback": ats_result["feedback"]
+        "ats_feedback": ats_result["feedback"],
+        "ai_summary": ai_summary
     }

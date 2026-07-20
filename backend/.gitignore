@@ -1,0 +1,23 @@
+# Environment variables
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Cache
+.pytest_cache/
+.mypy_cache/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store

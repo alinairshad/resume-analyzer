@@ -1,0 +1,150 @@
+/* Uses the design tokens defined in App.css — import order: App.css loads first. */
+
+.intro-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 26px;
+  background: var(--bg);
+  transition: opacity 0.4s ease;
+}
+
+.intro-loader-exit {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.intro-stage {
+  width: 170px;
+}
+
+.intro-doc {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.intro-doc-fill {
+  fill: var(--surface);
+  opacity: 0;
+  animation: intro-fill-in 0.4s ease forwards;
+}
+
+.intro-doc-outline {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 1.5;
+  stroke-dasharray: 920;
+  stroke-dashoffset: 920;
+  animation: intro-draw 0.7s ease forwards;
+}
+
+.intro-doc-name {
+  fill: var(--text-muted);
+  opacity: 0.55;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: intro-grow 0.35s ease 0.35s forwards;
+}
+
+.intro-doc-role {
+  fill: var(--text-muted);
+  opacity: 0.35;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: intro-grow 0.3s ease 0.48s forwards;
+}
+
+.intro-doc-line {
+  fill: var(--text-muted);
+  opacity: 0.22;
+  transform: scaleX(0);
+  transform-origin: left center;
+  animation: intro-grow 0.32s ease forwards;
+}
+
+.intro-scan-stop-edge {
+  stop-color: var(--mint);
+  stop-opacity: 0;
+}
+
+.intro-scan-stop-core {
+  stop-color: var(--mint);
+  stop-opacity: 0.9;
+}
+
+.intro-scan {
+  transform: translateY(0);
+  opacity: 0;
+  filter: drop-shadow(0 0 6px var(--mint));
+  animation: intro-sweep 1.6s ease-in-out 0.15s infinite;
+}
+
+.intro-status {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  animation: intro-status-in 0.35s ease;
+}
+
+.intro-status-done {
+  color: var(--mint);
+}
+
+.intro-chips {
+  display: flex;
+  gap: 8px;
+}
+
+.intro-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 5px;
+  background: #3ddc9718;
+  border: 1px solid #3ddc9740;
+  color: var(--mint);
+  opacity: 0;
+  transform: translateY(6px);
+  animation: intro-chip-in 0.4s ease forwards;
+}
+
+@keyframes intro-fill-in {
+  to { opacity: 1; }
+}
+
+@keyframes intro-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes intro-grow {
+  to { transform: scaleX(1); }
+}
+
+@keyframes intro-sweep {
+  0% { transform: translateY(0); opacity: 0; }
+  8% { opacity: 1; }
+  92% { opacity: 1; }
+  100% { transform: translateY(258px); opacity: 0; }
+}
+
+@keyframes intro-status-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes intro-chip-in {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-loader * {
+    animation: none !important;
+  }
+}

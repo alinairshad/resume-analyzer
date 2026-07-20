@@ -1,0 +1,344 @@
+/* Uses the same --bg, --surface, --indigo, --mint, --amber, --text, --font-mono,
+   --font-sans tokens defined in App.css. Import order: App.css must load first. */
+
+.landing {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* ---------------------------------------------------------------------
+   Top bar
+--------------------------------------------------------------------- */
+.landing-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+.landing-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--text);
+}
+
+.nav-cta {
+  background: var(--indigo);
+  color: #fff;
+  border: 1px solid var(--indigo);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.nav-cta:hover {
+  box-shadow: 0 0 0 4px var(--indigo-dim);
+}
+
+/* ---------------------------------------------------------------------
+   Hero
+--------------------------------------------------------------------- */
+.hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 90px 48px 100px;
+}
+
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 56px 24px 64px;
+    text-align: center;
+  }
+}
+
+.hero-eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--indigo);
+  border: 1px solid var(--indigo-dim);
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin-bottom: 22px;
+}
+
+.hero-title {
+  font-size: 44px;
+  line-height: 1.18;
+  font-weight: 600;
+  margin: 0 0 20px;
+  letter-spacing: -0.01em;
+}
+
+.hero-title .accent {
+  color: var(--mint);
+  font-style: italic;
+}
+
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  max-width: 460px;
+  margin: 0 0 32px;
+}
+
+@media (max-width: 900px) {
+  .hero-sub {
+    max-width: none;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 900px) {
+  .hero-actions {
+    justify-content: center;
+  }
+}
+
+.hero-primary {
+  background: var(--indigo);
+  color: #fff;
+  border: 1px solid var(--indigo);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  padding: 14px 24px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.hero-primary:hover {
+  box-shadow: 0 0 0 5px var(--indigo-dim);
+}
+
+.hero-primary:active {
+  transform: translateY(1px);
+}
+
+.hero-note {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------------
+   Hero visual — animated gauge
+--------------------------------------------------------------------- */
+.hero-visual {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 40px;
+}
+
+.hero-gauge {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.hero-gauge-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.hero-gauge-track {
+  stroke: var(--border);
+}
+
+.hero-gauge-fill {
+  stroke: var(--mint);
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+.hero-gauge-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-gauge-score {
+  font-family: var(--font-mono);
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.hero-gauge-unit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.hero-tags {
+  display: flex;
+  gap: 8px;
+}
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+
+.hero-tag-match {
+  background: #3ddc9718;
+  border-color: #3ddc9740;
+  color: var(--mint);
+}
+
+.hero-tag-gap {
+  background: #f5a62318;
+  border-color: #f5a62340;
+  color: var(--amber);
+}
+
+/* ---------------------------------------------------------------------
+   How it works
+--------------------------------------------------------------------- */
+.how {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 48px 100px;
+}
+
+.how-title {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin: 0 0 32px;
+}
+
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+@media (max-width: 760px) {
+  .how-steps {
+    grid-template-columns: 1fr;
+  }
+}
+
+.how-step {
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+
+.how-index {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--indigo);
+}
+
+.how-step h3 {
+  font-size: 17px;
+  margin: 10px 0 8px;
+}
+
+.how-step p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Features
+--------------------------------------------------------------------- */
+.features {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 48px 100px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 760px) {
+  .features {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 26px;
+}
+
+.feature-icon {
+  font-size: 20px;
+  color: var(--mint);
+}
+
+.feature-card h3 {
+  font-size: 15px;
+  margin: 14px 0 8px;
+}
+
+.feature-card p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ---------------------------------------------------------------------
+   Footer
+--------------------------------------------------------------------- */
+.landing-footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 48px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+}

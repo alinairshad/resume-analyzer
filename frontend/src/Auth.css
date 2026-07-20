@@ -1,0 +1,132 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 360px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+}
+
+.auth-back {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.auth-back:hover {
+  color: var(--text);
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.auth-brand .brand-mark {
+  color: var(--indigo);
+  font-size: 18px;
+}
+
+.auth-brand .brand-name {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.auth-tabs {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.auth-tab.active {
+  background: var(--indigo-dim);
+  color: var(--text);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-input {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  padding: 11px 12px;
+  margin-bottom: 4px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.auth-input:focus {
+  border-color: var(--indigo);
+}
+
+.auth-error {
+  color: var(--amber);
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
+.auth-notice {
+  color: var(--mint);
+  font-size: 12px;
+  margin: 10px 0 0;
+}
+
+.auth-submit {
+  margin-top: 20px;
+  background: var(--indigo);
+  color: #fff;
+  border: 1px solid var(--indigo);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  padding: 13px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.auth-submit:hover:not(:disabled) {
+  box-shadow: 0 0 0 4px var(--indigo-dim);
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
