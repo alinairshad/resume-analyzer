@@ -451,3 +451,71 @@ body {
   border-color: #5eead4;
   color: #5eead4;
 }
+.preview-link {
+  background: none;
+  border: 1px solid var(--border, #333);
+  color: #5eead4;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.preview-link:hover {
+  border-color: #5eead4;
+}
+
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.preview-panel {
+  background: var(--panel, #14151a);
+  border: 1px solid var(--border, #2a2c33);
+  border-radius: var(--radius, 8px);
+  width: 90%;
+  max-width: 700px;
+  height: 85vh;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.preview-header h2 {
+  font-size: 14px;
+  color: var(--text, #fff);
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-weight: 400;
+}
+
+.preview-close {
+  background: none;
+  border: none;
+  color: var(--text-muted, #888);
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.preview-frame {
+  flex: 1;
+  width: 100%;
+  border: none;
+  border-radius: 4px;
+  background: #fff;
+}
