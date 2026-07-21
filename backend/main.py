@@ -53,6 +53,30 @@ def calculate_match(resume_skills, jd_skills):
     }
 
 
+def build_heatmap(resume_text: str, jd_skills: list):
+    jd_skills_lower = set(s.lower() for s in jd_skills)
+    lines = [line.strip() for line in resume_text.split("\n") if line.strip()]
+
+    heatmap_lines = []
+    for line in lines:
+        line_doc = nlp(line)
+        line_matches = matcher(line_doc)
+        matched_in_line = set()
+        for match_id, start, end in line_matches:
+            span = line_doc[start:end]
+            skill = span.text.lower()
+            if skill in jd_skills_lower:
+                matched_in_line.add(skill)
+
+        heatmap_lines.append({
+            "text": line,
+            "keyword_count": len(matched_in_line),
+            "keywords": list(matched_in_line)
+        })
+
+    return heatmap_lines
+
+
 @app.get("/")
 def home():
     return {"message": "Resume Analyzer API is running"}
@@ -76,6 +100,8 @@ async def analyze_resume(
     match_result = calculate_match(resume_skills, jd_skills)
     ats_result = check_ats_score(extracted_text)
     ai_summary = generate_ai_feedback(extracted_text, job_description, match_result["matched_skills"], match_result["missing_skills"])
+    heatmap_lines = build_heatmap(extracted_text, jd_skills)
+
     return {
         "filename": file.filename,
         "resume_skills": resume_skills,
@@ -85,5 +111,6 @@ async def analyze_resume(
         "missing_skills": match_result["missing_skills"],
         "ats_score": ats_result["ats_score"],
         "ats_feedback": ats_result["feedback"],
-        "ai_summary": ai_summary
+        "ai_summary": ai_summary,
+        "heatmap_lines": heatmap_lines
     }

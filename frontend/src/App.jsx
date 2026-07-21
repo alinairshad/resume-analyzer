@@ -33,6 +33,7 @@ async function analyzeResume(resumeFile, jobText) {
     atsScore: data.ats_score,
     atsFeedback: data.ats_feedback,
     aiSummary: data.ai_summary,
+    heatmapLines: data.heatmap_lines || [],
   };
 }
 
@@ -397,6 +398,26 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
                   <p style={{ color: "var(--text)", fontSize: 13, whiteSpace: "pre-wrap" }}>
                     {result.aiSummary}
                   </p>
+                </div>
+              )}
+
+              {result.heatmapLines && result.heatmapLines.length > 0 && (
+                <div className="tag-group">
+                  <p className="tag-group-label">Resume Keyword Heatmap</p>
+                  <div className="heatmap-box">
+                    {result.heatmapLines.map((line, i) => {
+                      const intensity = Math.min(line.keyword_count, 3);
+                      return (
+                        <p
+                          key={i}
+                          className={`heatmap-line heatmap-level-${intensity}`}
+                          title={line.keywords.join(", ") || "No matched keywords"}
+                        >
+                          {line.text}
+                        </p>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </div>
