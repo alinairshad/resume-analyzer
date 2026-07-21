@@ -33,6 +33,7 @@ async function analyzeResume(resumeFile, jobText) {
     atsScore: data.ats_score,
     atsFeedback: data.ats_feedback,
     aiSummary: data.ai_summary,
+    heatmapLines: data.heatmap_lines || [],
   };
 }
 
@@ -80,11 +81,22 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
   const [result, setResult] = useState(null);
   const [errorMsg, setErrorMsg] = useState("");
   const [showHistory, setShowHistory] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
   const inputRef = useRef(null);
+
+  // Clean up the object URL when it changes or the component unmounts
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
 
   const handleFile = (file) => {
     if (file && file.type === "application/pdf") {
       setResumeFile(file);
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(URL.createObjectURL(file));
     }
   };
 
@@ -278,6 +290,16 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
                   <p className="file-name">{resumeFile.name}</p>
                   <p className="file-meta">{(resumeFile.size / 1024).toFixed(0)} KB · click to replace</p>
                 </div>
+                <button
+                  type="button"
+                  className="preview-link"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPreview(true);
+                  }}
+                >
+                  Preview
+                </button>
               </div>
             ) : (
               <div className="dropzone-empty">
@@ -378,6 +400,26 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
                   </p>
                 </div>
               )}
+
+              {result.heatmapLines && result.heatmapLines.length > 0 && (
+                <div className="tag-group">
+                  <p className="tag-group-label">Resume Keyword Heatmap</p>
+                  <div className="heatmap-box">
+                    {result.heatmapLines.map((line, i) => {
+                      const intensity = Math.min(line.keyword_count, 3);
+                      return (
+                        <p
+                          key={i}
+                          className={`heatmap-line heatmap-level-${intensity}`}
+                          title={line.keywords.join(", ") || "No matched keywords"}
+                        >
+                          {line.text}
+                        </p>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </section>
@@ -392,6 +434,18 @@ function AnalyzerPage({ onBackToHome, onSignOut, userEmail }) {
             setShowHistory(false);
           }}
         />
+      )}
+
+      {showPreview && previewUrl && (
+        <div className="preview-overlay" onClick={() => setShowPreview(false)}>
+          <div className="preview-panel" onClick={(e) => e.stopPropagation()}>
+            <div className="preview-header">
+              <h2>{resumeFile?.name}</h2>
+              <button className="preview-close" onClick={() => setShowPreview(false)}>✕</button>
+            </div>
+            <iframe src={previewUrl} title="Resume preview" className="preview-frame" />
+          </div>
+        </div>
       )}
     </div>
   );
